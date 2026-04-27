@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PricyMorph — 全球购物美元换算神器</title>
+  <!-- ...样式同原始 sales.html... -->
+  <style>
+    /* ...省略，直接复制原始 sales.html 的 <style> ... */
+  </style>
+</head>
+<body>
+<!-- ...existing code... -->
+<!-- PAY MODAL -->
+<div id="payModal" style="display:none;position:fixed;inset:0;z-index:999;background:rgba(0,0,0,0.55);backdrop-filter:blur(4px);align-items:center;justify-content:center;">
+  <div style="background:white;border-radius:20px;padding:36px 32px;max-width:340px;width:90%;text-align:center;box-shadow:0 24px 64px rgba(0,0,0,0.22);position:relative;">
+    <button onclick="closePayModal()" style="position:absolute;top:14px;right:16px;background:none;border:none;font-size:22px;color:#999;cursor:pointer;line-height:1;">×</button>
+    <div style="font-size:22px;font-weight:800;color:#2d3748;margin-bottom:6px;">微信扫码付款</div>
+    <div style="font-size:14px;color:#718096;margin-bottom:20px;">扫码后备注您的<strong>邮箱地址</strong>，许可证将在 1 小时内发出</div>
+    <img src="assets/img/wechat-qr.jpg"
+         alt="微信收款码"
+         style="width:220px;height:220px;object-fit:contain;border-radius:12px;border:1px solid #e2e8f0;">
+    <div style="margin-top:18px;background:#f6f8ff;border-radius:10px;padding:12px 16px;font-size:13px;color:#4a9eff;font-weight:600;">
+      ¥99 · 一次付费 · 永久激活
+    </div>
+    <div style="margin-top:14px;font-size:12px;color:#a0aec0;">付款后如 2 小时未收到许可证，请联系 <a href="mailto:403422006@qq.com" style="color:#4a9eff;">403422006@qq.com</a></div>
+  </div>
+</div>
+<script>
+  // ...existing JS code, unchanged...
+</script>
+</body>
+</html>
