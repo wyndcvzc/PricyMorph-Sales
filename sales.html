@@ -1,23 +1,1009 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>PricyMorph — 全球购物美元换算神器</title>
-  <!-- ...样式同原始 sales.html... -->
   <style>
-    /* ...省略，直接复制原始 sales.html 的 <style> ... */
+    :root {
+      --primary: #4a9eff;
+      --primary-dark: #2d7dd2;
+      --primary-light: rgba(74, 158, 255, 0.10);
+      --accent: #ff6b35;
+      --success: #38a169;
+      --text: #2d3748;
+      --text-muted: #718096;
+      --border: #e2e8f0;
+      --bg: #f6f8ff;
+      --white: #ffffff;
+      --radius: 14px;
+      --shadow: 0 8px 32px rgba(74, 158, 255, 0.12);
+      --shadow-lg: 0 16px 48px rgba(74, 158, 255, 0.18);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+        "Microsoft YaHei", system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(255, 255, 255, 0.88);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 60px;
+    }
+
+    .nav-logo {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--primary);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .nav-logo .logo-icon {
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 16px;
+    }
+
+    .nav-cta {
+      background: var(--primary);
+      color: white;
+      padding: 8px 20px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 600;
+      transition: background 0.2s, transform 0.15s;
+    }
+
+    .nav-cta:hover { background: var(--primary-dark); transform: translateY(-1px); }
+
+    /* ── HERO ── */
+    .hero {
+      text-align: center;
+      padding: 96px 24px 72px;
+      background: linear-gradient(160deg, #eef4ff 0%, #f6f8ff 60%, #fffaf6 100%);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(74,158,255,0.08) 0%, transparent 70%);
+      top: -100px;
+      left: 50%;
+      transform: translateX(-50%);
+      pointer-events: none;
+    }
+
+    .hero-badge {
+      display: inline-block;
+      background: var(--primary-light);
+      color: var(--primary);
+      border: 1px solid rgba(74, 158, 255, 0.3);
+      border-radius: 100px;
+      padding: 5px 16px;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      letter-spacing: 0.02em;
+    }
+
+    .hero h1 {
+      font-size: clamp(32px, 5vw, 54px);
+      font-weight: 800;
+      line-height: 1.18;
+      color: var(--text);
+      margin-bottom: 20px;
+    }
+
+    .hero h1 span { color: var(--primary); }
+
+    .hero p {
+      font-size: 18px;
+      color: var(--text-muted);
+      max-width: 520px;
+      margin: 0 auto 36px;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 14px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      color: white;
+      padding: 14px 32px;
+      border-radius: 10px;
+      text-decoration: none;
+      font-size: 16px;
+      font-weight: 700;
+      box-shadow: 0 4px 16px rgba(74,158,255,0.35);
+      transition: transform 0.18s, box-shadow 0.18s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(74,158,255,0.45);
+    }
+
+    .btn-secondary {
+      background: white;
+      color: var(--primary);
+      padding: 14px 32px;
+      border-radius: 10px;
+      text-decoration: none;
+      font-size: 16px;
+      font-weight: 600;
+      border: 2px solid var(--primary);
+      transition: background 0.18s, transform 0.18s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-secondary:hover { background: var(--primary-light); transform: translateY(-2px); }
+
+    /* ── DEMO MOCKUP ── */
+    .demo-wrap {
+      display: flex;
+      justify-content: center;
+      padding: 48px 24px 0;
+    }
+
+    .browser-mock {
+      background: white;
+      border-radius: 14px;
+      box-shadow: var(--shadow-lg);
+      overflow: hidden;
+      max-width: 560px;
+      width: 100%;
+    }
+
+    .browser-bar {
+      background: #f1f3f4;
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .browser-dots { display: flex; gap: 6px; }
+
+    .browser-dots span {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+
+    .browser-dots span:nth-child(1) { background: #ff5f57; }
+    .browser-dots span:nth-child(2) { background: #ffbd2e; }
+    .browser-dots span:nth-child(3) { background: #28c840; }
+
+    .browser-url {
+      flex: 1;
+      background: white;
+      border-radius: 6px;
+      padding: 5px 12px;
+      font-size: 12px;
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+    }
+
+    .browser-content {
+      padding: 24px;
+    }
+
+    .product-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .product-row:last-child { border-bottom: none; }
+
+    .product-img {
+      width: 56px;
+      height: 56px;
+      background: linear-gradient(135deg, #e8f4fd, #d0e8ff);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      flex-shrink: 0;
+    }
+
+    .product-info { flex: 1; }
+
+    .product-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+
+    .product-price-row { display: flex; align-items: center; gap: 10px; }
+
+    .price-usd {
+      font-size: 15px;
+      color: var(--text-muted);
+      text-decoration: line-through;
+    }
+
+    .price-cny {
+      background: linear-gradient(90deg, #ff6b35, #ff9a56);
+      color: white;
+      padding: 3px 10px;
+      border-radius: 6px;
+      font-size: 15px;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .price-tag-icon { font-size: 11px; opacity: 0.85; }
+
+    /* ── SECTION COMMON ── */
+    section { padding: 80px 24px; }
+
+    .section-label {
+      text-align: center;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--primary);
+      margin-bottom: 12px;
+    }
+
+    .section-title {
+      text-align: center;
+      font-size: clamp(24px, 3.5vw, 36px);
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 14px;
+    }
+
+    .section-sub {
+      text-align: center;
+      font-size: 16px;
+      color: var(--text-muted);
+      max-width: 480px;
+      margin: 0 auto 52px;
+    }
+
+    /* ── FEATURES ── */
+    .features { background: white; }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 24px;
+      max-width: 960px;
+      margin: 0 auto;
+    }
+
+    .feature-card {
+      padding: 28px;
+      background: var(--bg);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow);
+    }
+
+    .feature-icon {
+      width: 48px;
+      height: 48px;
+      background: var(--primary-light);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      margin-bottom: 16px;
+    }
+
+    .feature-card h3 {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: var(--text);
+    }
+
+    .feature-card p { font-size: 14px; color: var(--text-muted); line-height: 1.65; }
+
+    /* ── COMPARISON TABLE ── */
+    .comparison { background: var(--bg); }
+
+    .compare-wrap {
+      max-width: 700px;
+      margin: 0 auto;
+      background: white;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .compare-head {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+    }
+
+    .compare-head div {
+      padding: 20px 16px;
+      text-align: center;
+      font-weight: 700;
+      font-size: 15px;
+      background: var(--bg);
+    }
+
+    .compare-head .col-pro {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      color: white;
+      position: relative;
+    }
+
+    .badge-popular {
+      position: absolute;
+      top: -1px;
+      right: -1px;
+      background: var(--accent);
+      color: white;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 0 var(--radius) 0 8px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .compare-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      border-top: 1px solid var(--border);
+    }
+
+    .compare-row div {
+      padding: 14px 16px;
+      font-size: 14px;
+      text-align: center;
+      color: var(--text);
+    }
+
+    .compare-row div:first-child { text-align: left; color: var(--text-muted); }
+
+    .compare-row .col-pro { background: rgba(74, 158, 255, 0.04); }
+
+    .check { color: var(--success); font-size: 18px; }
+    .cross { color: #c0c0c0; font-size: 18px; }
+
+    /* ── PRICING ── */
+    .pricing { background: white; }
+
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+      max-width: 680px;
+      margin: 0 auto;
+    }
+
+    .price-card {
+      padding: 32px 28px;
+      border-radius: var(--radius);
+      border: 2px solid var(--border);
+      text-align: center;
+      position: relative;
+      transition: transform 0.2s, box-shadow 0.2s;
+      background: white;
+    }
+
+    .price-card:hover { transform: translateY(-4px); box-shadow: var(--shadow); }
+
+    .price-card.highlighted {
+      border-color: var(--primary);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .plan-name {
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    .plan-price {
+      font-size: 48px;
+      font-weight: 800;
+      color: var(--text);
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+
+    .plan-price sup { font-size: 22px; font-weight: 700; vertical-align: super; }
+    .plan-price .period { font-size: 15px; color: var(--text-muted); font-weight: 400; }
+
+    .plan-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 24px;
+    }
+
+    .plan-features {
+      list-style: none;
+      margin-bottom: 28px;
+      text-align: left;
+    }
+
+    .plan-features li {
+      font-size: 14px;
+      padding: 6px 0;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      color: var(--text);
+    }
+
+    .plan-features li .icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+
+    .btn-plan {
+      display: block;
+      padding: 13px;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 700;
+      text-decoration: none;
+      transition: transform 0.18s, box-shadow 0.18s;
+      cursor: pointer;
+      border: none;
+      width: 100%;
+    }
+
+    .btn-plan-free {
+      background: var(--bg);
+      color: var(--primary);
+      border: 2px solid var(--primary);
+    }
+
+    .btn-plan-free:hover { background: var(--primary-light); }
+
+    .btn-plan-paid {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      color: white;
+      box-shadow: 0 4px 16px rgba(74,158,255,0.35);
+    }
+
+    .btn-plan-paid:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(74,158,255,0.45);
+    }
+
+    .plan-note {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 12px;
+    }
+
+    /* ── SOCIAL PROOF ── */
+    .testimonials { background: var(--bg); }
+
+    .testi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 20px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .testi-card {
+      background: white;
+      border-radius: var(--radius);
+      padding: 24px;
+      border: 1px solid var(--border);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+
+    .testi-stars { color: #fbbf24; font-size: 14px; margin-bottom: 10px; }
+
+    .testi-text {
+      font-size: 14px;
+      color: var(--text);
+      line-height: 1.65;
+      margin-bottom: 16px;
+    }
+
+    .testi-author {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .testi-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 700;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+
+    .testi-name { font-size: 13px; font-weight: 700; color: var(--text); }
+    .testi-role { font-size: 12px; color: var(--text-muted); }
+
+    /* ── FAQ ── */
+    .faq { background: white; }
+
+    .faq-list {
+      max-width: 640px;
+      margin: 0 auto;
+    }
+
+    .faq-item {
+      border-bottom: 1px solid var(--border);
+    }
+
+    .faq-q {
+      width: 100%;
+      background: none;
+      border: none;
+      padding: 18px 4px;
+      text-align: left;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text);
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .faq-q:hover { color: var(--primary); }
+
+    .faq-chevron { font-size: 12px; transition: transform 0.25s; flex-shrink: 0; }
+    .faq-item.open .faq-chevron { transform: rotate(180deg); }
+
+    .faq-a {
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.7;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease, padding 0.3s ease;
+      padding: 0 4px;
+    }
+
+    .faq-item.open .faq-a {
+      max-height: 200px;
+      padding: 0 4px 18px;
+    }
+
+    /* ── CTA BANNER ── */
+    .cta-banner {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      padding: 72px 24px;
+      text-align: center;
+      color: white;
+    }
+
+    .cta-banner h2 { font-size: clamp(24px, 3.5vw, 36px); font-weight: 800; margin-bottom: 14px; }
+    .cta-banner p { font-size: 16px; opacity: 0.85; margin-bottom: 32px; }
+
+    .btn-white {
+      background: white;
+      color: var(--primary);
+      padding: 14px 36px;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 700;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: transform 0.18s, box-shadow 0.18s;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+    }
+
+    .btn-white:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.2); }
+
+    /* ── FOOTER ── */
+    footer {
+      background: #1a202c;
+      color: #a0aec0;
+      padding: 40px 24px;
+      text-align: center;
+    }
+
+    .footer-logo { color: var(--primary); font-weight: 700; font-size: 16px; margin-bottom: 12px; }
+
+    footer p { font-size: 13px; line-height: 1.7; }
+
+    footer a { color: #a0aec0; text-decoration: none; }
+    footer a:hover { color: var(--primary); }
+
+    /* ── UTILS ── */
+    .container { max-width: 1080px; margin: 0 auto; }
+
+    @media (max-width: 600px) {
+      nav { padding: 0 16px; }
+      .hero { padding: 72px 16px 52px; }
+      section { padding: 56px 16px; }
+      .compare-head div, .compare-row div { padding: 12px 8px; font-size: 13px; }
+    }
   </style>
 </head>
 <body>
-<!-- ...existing code... -->
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">
+    <div class="logo-icon">💱</div>
+    PricyMorph
+  </a>
+  <a href="#pricing" class="nav-cta">立即获取 →</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-badge">🎉 浏览器扩展 · 离线可用 · 一次付费永久激活</div>
+  <h1>海淘不再猜价格<br><span>美元秒换人民币</span></h1>
+  <p>浏览海外网站时，自动识别所有美元标价，实时显示人民币对照——从此告别手动换算。</p>
+  <div class="hero-actions">
+    <a href="#pricing" class="btn-primary">🛒 立即购买 &nbsp;¥99</a>
+    <a href="#features" class="btn-secondary">了解功能</a>
+  </div>
+</section>
+
+<!-- DEMO MOCKUP -->
+<div class="demo-wrap">
+  <div class="browser-mock">
+    <div class="browser-bar">
+      <div class="browser-dots">
+        <span></span><span></span><span></span>
+      </div>
+      <div class="browser-url">🔒 amazon.com/product</div>
+    </div>
+    <div class="browser-content">
+      <div class="product-row">
+        <div class="product-img">🎧</div>
+        <div class="product-info">
+          <div class="product-name">Sony WH-1000XM5 无线降噪耳机</div>
+          <div class="product-price-row">
+            <span class="price-usd">$279.99</span>
+            <span class="price-cny">
+              <span class="price-tag-icon">≈</span> ¥2,033
+            </span>
+          </div>
+        </div>
+      </div>
+      <div class="product-row">
+        <div class="product-img">⌨️</div>
+        <div class="product-info">
+          <div class="product-name">Keychron Q1 Pro 机械键盘</div>
+          <div class="product-price-row">
+            <span class="price-usd">$199.00</span>
+            <span class="price-cny">
+              <span class="price-tag-icon">≈</span> ¥1,447
+            </span>
+          </div>
+        </div>
+      </div>
+      <div class="product-row">
+        <div class="product-img">📷</div>
+        <div class="product-info">
+          <div class="product-name">GoPro HERO13 Black 运动相机</div>
+          <div class="product-price-row">
+            <span class="price-usd">$399.99</span>
+            <span class="price-cny">
+              <span class="price-tag-icon">≈</span> ¥2,907
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FEATURES -->
+<section class="features" id="features">
+  <div class="section-label">核心功能</div>
+  <h2 class="section-title">专为海淘党打造</h2>
+  <p class="section-sub">不只是换算，而是改变你购物时的视角。</p>
+
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-icon">⚡</div>
+      <h3>自动识别，无需操作</h3>
+      <p>打开任意海外网站，页面上所有美元标价自动显示人民币约值，不用选中、不用点击。</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">📡</div>
+      <h3>实时汇率，每日更新</h3>
+      <p>接入 ExchangeRate-API，每 24 小时自动刷新汇率，并本地缓存，断网也能用。</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🔒</div>
+      <h3>完全离线验证</h3>
+      <p>许可证本地验证，不向任何服务器发送数据。买断即永久，不依赖订阅服务器在线。</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">⌨️</div>
+      <h3>快捷键 Ctrl+Shift+Y</h3>
+      <p>一键唤出转换面板，随时手动输入金额换算，不打断正常浏览。</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🌐</div>
+      <h3>全站覆盖</h3>
+      <p>Amazon、eBay、Best Buy、B&H、Adorama……只要有 $ 符号，统统识别。</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🪶</div>
+      <h3>轻量无感</h3>
+      <p>纯原生 JavaScript，无第三方框架，不拖慢页面加载，内存占用极低。</p>
+    </div>
+  </div>
+</section>
+
+<!-- COMPARISON -->
+<section class="comparison" id="compare">
+  <div class="section-label">版本对比</div>
+  <h2 class="section-title">免费 vs. Lifetime</h2>
+  <p class="section-sub">一次购买，永久解锁所有功能。</p>
+
+  <div class="compare-wrap">
+    <div class="compare-head">
+      <div>功能</div>
+      <div>免费版</div>
+      <div class="col-pro">
+        Lifetime
+        <span class="badge-popular">推荐</span>
+      </div>
+    </div>
+    <div class="compare-row">
+      <div>手动金额换算</div>
+      <div><span class="check">✓</span></div>
+      <div class="col-pro"><span class="check">✓</span></div>
+    </div>
+    <div class="compare-row">
+      <div>实时汇率查询</div>
+      <div><span class="check">✓</span></div>
+      <div class="col-pro"><span class="check">✓</span></div>
+    </div>
+    <div class="compare-row">
+      <div>页面自动识别美元</div>
+      <div><span class="cross">—</span></div>
+      <div class="col-pro"><span class="check">✓</span></div>
+    </div>
+    <div class="compare-row">
+      <div>全站实时价格对照</div>
+      <div><span class="cross">—</span></div>
+      <div class="col-pro"><span class="check">✓</span></div>
+    </div>
+    <div class="compare-row">
+      <div>离线可用（缓存汇率）</div>
+      <div><span class="check">✓</span></div>
+      <div class="col-pro"><span class="check">✓</span></div>
+    </div>
+    <div class="compare-row">
+      <div>永久激活·无订阅</div>
+      <div><span class="cross">—</span></div>
+      <div class="col-pro"><span class="check">✓</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="pricing" id="pricing">
+  <div class="section-label">定价</div>
+  <h2 class="section-title">简单透明，一次买断</h2>
+  <p class="section-sub">没有月费，没有年费，付一次用到底。</p>
+
+  <div class="pricing-grid">
+    <!-- FREE -->
+    <div class="price-card">
+      <div class="plan-name">免费版</div>
+      <div class="plan-price"><sup>¥</sup>0</div>
+      <div class="plan-desc">基础换算，永久免费</div>
+      <ul class="plan-features">
+        <li><span class="icon">✅</span>手动金额换算</li>
+        <li><span class="icon">✅</span>实时汇率（24h 缓存）</li>
+        <li><span class="icon">✅</span>快捷键 Ctrl+Shift+Y</li>
+        <li><span class="icon">❌</span><span style="color:var(--text-muted)">页面自动识别</span></li>
+      </ul>
+      <a href="#" class="btn-plan btn-plan-free">免费安装</a>
+      <p class="plan-note">Chrome/Edge 商店直接安装</p>
+    </div>
+
+    <!-- LIFETIME -->
+    <div class="price-card highlighted">
+      <div class="plan-name">Lifetime 终身版</div>
+      <div class="plan-price"><sup>¥</sup>99</div>
+      <div class="plan-desc">一次付费，永久激活，无任何续费</div>
+      <ul class="plan-features">
+        <li><span class="icon">✅</span>免费版全部功能</li>
+        <li><span class="icon">✅</span>页面自动识别所有美元</li>
+        <li><span class="icon">✅</span>全站实时价格对照显示</li>
+        <li><span class="icon">✅</span>离线许可证，无服务器依赖</li>
+        <li><span class="icon">✅</span>买断永久，后续功能同步更新</li>
+      </ul>
+      <!-- 将 href 替换为你的实际收款链接（微信/支付宝/爱发电等） -->
+      <button onclick="openPayModal()" class="btn-plan btn-plan-paid">🛒 立即购买 · ¥99</button>
+      <p class="plan-note">付款后邮件发送许可证，导入即激活</p>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials">
+  <div class="section-label">用户评价</div>
+  <h2 class="section-title">他们已经在用了</h2>
+  <p class="section-sub">来自真实海淘用户的反馈。</p>
+
+  <div class="testi-grid">
+    <div class="testi-card">
+      <div class="testi-stars">★★★★★</div>
+      <p class="testi-text">以前每次在 Amazon 看产品都要手动打开换算器，现在直接看人民币，效率翻倍。¥99 完全值得。</p>
+      <div class="testi-author">
+        <div class="testi-avatar">小</div>
+        <div>
+          <div class="testi-name">小晗同学</div>
+          <div class="testi-role">数码爱好者</div>
+        </div>
+      </div>
+    </div>
+    <div class="testi-card">
+      <div class="testi-stars">★★★★★</div>
+      <p class="testi-text">海淘摄影器材的救星！B&H 那种满屏 $ 的页面，现在一眼就知道花多少人民币。装机神器。</p>
+      <div class="testi-author">
+        <div class="testi-avatar">云</div>
+        <div>
+          <div class="testi-name">摄影师云哥</div>
+          <div class="testi-role">自由摄影师</div>
+        </div>
+      </div>
+    </div>
+    <div class="testi-card">
+      <div class="testi-stars">★★★★★</div>
+      <p class="testi-text">离线验证这个设计很好，不用担心服务器哪天关掉许可证失效。买断就该是真正的买断。</p>
+      <div class="testi-author">
+        <div class="testi-avatar">程</div>
+        <div>
+          <div class="testi-name">程序员老王</div>
+          <div class="testi-role">软件工程师</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq">
+  <div class="section-label">常见问题</div>
+  <h2 class="section-title">有疑问？看这里</h2>
+  <p class="section-sub"></p>
+
+  <div class="faq-list">
+    <div class="faq-item">
+      <button class="faq-q">
+        购买后如何激活？
+        <span class="faq-chevron">▼</span>
+      </button>
+      <div class="faq-a">付款完成后，许可证文件会发送到您的邮箱。在扩展弹窗中点击「导入许可证文件」，选择收到的 .txt 文件，即可一键激活。</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">
+        支持哪些浏览器？
+        <span class="faq-chevron">▼</span>
+      </button>
+      <div class="faq-a">目前支持 Chrome 和 Edge（Chromium 内核）。Firefox 版本正在规划中。</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">
+        汇率数据准确吗？多久更新一次？
+        <span class="faq-chevron">▼</span>
+      </button>
+      <div class="faq-a">汇率来自 ExchangeRate-API，每 24 小时自动更新一次并本地缓存。汇率为参考中间价，仅供购物决策参考，不作为金融投资依据。</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">
+        扩展会收集我的浏览数据吗？
+        <span class="faq-chevron">▼</span>
+      </button>
+      <div class="faq-a">不会。扩展只在本地运行，许可证验证也是完全离线的。唯一的网络请求是拉取汇率数据（仅 GET 请求，无任何用户信息）。</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">
+        许可证可以换设备使用吗？
+        <span class="faq-chevron">▼</span>
+      </button>
+      <div class="faq-a">可以。许可证不绑定设备，只需将许可证文件导入新浏览器的扩展即可激活，适合多台电脑个人使用。</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">
+        如果不满意可以退款吗？
+        <span class="faq-chevron">▼</span>
+      </button>
+      <div class="faq-a">支持购买后 7 天内无理由退款。发送邮件说明即可处理。</div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA BANNER -->
+<div class="cta-banner">
+  <h2>海淘购物，从此心里有数</h2>
+  <p>¥99 买断，价格对照触手可及，再也不用反复打开换算器。</p>
+  <button onclick="openPayModal()" class="btn-white">🛒 立即购买 Lifetime · ¥99</button>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">💱 PricyMorph</div>
+  <p>
+    &copy; 2026 PricyMorph · 
+    <a href="#">隐私政策</a> · 
+    <a href="#">使用条款</a> · 
+    <a href="mailto:403422006@qq.com">联系我们</a>
+  </p>
+</footer>
+
 <!-- PAY MODAL -->
 <div id="payModal" style="display:none;position:fixed;inset:0;z-index:999;background:rgba(0,0,0,0.55);backdrop-filter:blur(4px);align-items:center;justify-content:center;">
   <div style="background:white;border-radius:20px;padding:36px 32px;max-width:340px;width:90%;text-align:center;box-shadow:0 24px 64px rgba(0,0,0,0.22);position:relative;">
     <button onclick="closePayModal()" style="position:absolute;top:14px;right:16px;background:none;border:none;font-size:22px;color:#999;cursor:pointer;line-height:1;">×</button>
     <div style="font-size:22px;font-weight:800;color:#2d3748;margin-bottom:6px;">微信扫码付款</div>
     <div style="font-size:14px;color:#718096;margin-bottom:20px;">扫码后备注您的<strong>邮箱地址</strong>，许可证将在 1 小时内发出</div>
-    <img src="assets/img/wechat-qr.jpg"
+    <img src="https://img.cdn1.vip/i/69eec9d1b62f1_1777256913.webp"
          alt="微信收款码"
          style="width:220px;height:220px;object-fit:contain;border-radius:12px;border:1px solid #e2e8f0;">
     <div style="margin-top:18px;background:#f6f8ff;border-radius:10px;padding:12px 16px;font-size:13px;color:#4a9eff;font-weight:600;">
@@ -26,8 +1012,30 @@
     <div style="margin-top:14px;font-size:12px;color:#a0aec0;">付款后如 2 小时未收到许可证，请联系 <a href="mailto:403422006@qq.com" style="color:#4a9eff;">403422006@qq.com</a></div>
   </div>
 </div>
+
 <script>
-  // ...existing JS code, unchanged...
+  // FAQ accordion
+  document.querySelectorAll('.faq-q').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const item = btn.closest('.faq-item');
+      const isOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+      if (!isOpen) item.classList.add('open');
+    });
+  });
+
+  // Pay modal
+  const modal = document.getElementById('payModal');
+  function openPayModal() {
+    modal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+  }
+  function closePayModal() {
+    modal.style.display = 'none';
+    document.body.style.overflow = '';
+  }
+  modal.addEventListener('click', e => { if (e.target === modal) closePayModal(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closePayModal(); });
 </script>
 </body>
 </html>
